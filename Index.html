@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dinshunoslik Testi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --border: #2a2a32;
+    --accent: #c9a84c;
+    --accent2: #e8c96a;
+    --text: #e8e8e0;
+    --muted: #7a7a88;
+    --correct: #4caf88;
+    --wrong: #e05c5c;
+    --correct-bg: #1a2e28;
+    --wrong-bg: #2e1a1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* Subtle grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 720px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+  }
+
+  header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  header h1 span { color: var(--accent); }
+
+  .stats-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+
+  .stat { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .stat-label { color: var(--muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+  .stat-value { font-weight: 600; font-size: 20px; }
+  .stat-value.correct { color: var(--correct); }
+  .stat-value.wrong { color: var(--wrong); }
+  .stat-value.accent { color: var(--accent); }
+
+  .progress-wrap {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 20px;
+    animation: slideIn 0.35s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--accent);
+    background: #1a1a20;
+    transform: translateX(3px);
+  }
+
+  .option .letter {
+    min-width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+
+  .option:hover:not(.disabled) .letter {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .option.correct {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+  }
+
+  .option.correct .letter {
+    background: var(--correct);
+    color: #fff;
+  }
+
+  .option.wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-bg);
+  }
+
+  .option.wrong .letter {
+    background: var(--wrong);
+    color: #fff;
+  }
+
+  .option.disabled { cursor: default; }
+
+  .feedback {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .feedback.correct {
+    display: flex;
+    background: var(--correct-bg);
+    color: var(--correct);
+    border: 1px solid var(--correct);
+    gap: 8px;
+    align-items: center;
+  }
+
+  .feedback.wrong {
+    display: flex;
+    background: var(--wrong-bg);
+    color: #ff8a8a;
+    border: 1px solid var(--wrong);
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn-next {
+    display: none;
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: #0d0d0f;
+    border: none;
+    border-radius: 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.18s;
+    margin-top: 16px;
+  }
+
+  .btn-next:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  /* Result screen */
+  .result-screen {
+    display: none;
+    text-align: center;
+    padding: 50px 20px;
+    animation: slideIn 0.4s ease;
+  }
+
+  .result-screen .big-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 90px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .result-screen .score-label {
+    color: var(--muted);
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  .result-screen .result-msg {
+    font-size: 22px;
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 10px;
+  }
+
+  .result-screen .result-sub {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 40px;
+  }
+
+  .result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+
+  .result-stat {
+    padding: 20px 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .result-stat .n { font-size: 32px; font-weight: 700; }
+  .result-stat .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+
+  .btn-restart {
+    padding: 16px 40px;
+    background: transparent;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .btn-restart:hover {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* Start screen */
+  .start-screen {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .start-screen p {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn-start {
+    padding: 18px 50px;
+    background: var(--accent);
+    color: #0d0d0f;
+    border: none;
+    border-radius: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .btn-start:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+
+  .shuffle-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    font-size: 14px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .toggle {
+    width: 40px; height: 22px;
+    background: var(--border);
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .toggle.on { background: var(--accent); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    top: 3px; left: 3px;
+    transition: transform 0.2s;
+  }
+
+  .toggle.on::after { transform: translateX(18px); }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 30px 0 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="eyebrow">O'zbekiston · Ta'lim</div>
+    <h1>Dinshunoslik <span>Testi</span></h1>
+  </header>
+
+  <!-- Start Screen -->
+  <div class="start-screen" id="startScreen">
+    <p>Dinshunoslik fanidan 200+ ta test savoli. Har safar savollar aralashtiriladi. To'g'ri javobni tanlang va bilimlaringizni sinab ko'ring!</p>
+    <div class="shuffle-toggle" onclick="toggleShuffle()">
+      <div class="toggle on" id="shuffleToggle"></div>
+      <span id="shuffleLabel">Savollarni aralashtirish: Yoqilgan</span>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Testni Boshlash →</button>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quizScreen" style="display:none;">
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-label">Savol</span>
+        <span class="stat-value accent" id="qCounter">1/50</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">To'g'ri</span>
+        <span class="stat-value correct" id="correctCount">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Noto'g'ri</span>
+        <span class="stat-value wrong" id="wrongCount">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Ball</span>
+        <span class="stat-value accent" id="scorePercent">0%</span>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+
+    <div class="card" id="questionCard">
+      <div class="q-number" id="qNumber">SAVOL 1</div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Keyingi savol →</button>
+    </div>
+  </div>
+
+  <!-- Result Screen -->
+  <div class="result-screen" id="resultScreen">
+    <div class="big-score" id="finalScore">0%</div>
+    <div class="score-label">Yakuniy natija</div>
+    <div class="result-msg" id="resultMsg">Tabriklaymiz!</div>
+    <div class="result-sub" id="resultSub"></div>
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="n correct" id="rCorrect">0</div>
+        <div class="l">To'g'ri</div>
+      </div>
+      <div class="result-stat">
+        <div class="n wrong" id="rWrong">0</div>
+        <div class="l">Noto'g'ri</div>
+      </div>
+      <div class="result-stat">
+        <div class="n accent" id="rTotal">0</div>
+        <div class="l">Jami</div>
+      </div>
+    </div>
+    <button class="btn-restart" onclick="restartQuiz()">↺ Qayta boshlash</button>
+  </div>
+
+  <footer>Dinshunoslik · Barcha savollar</footer>
+</div>
+
+<script>
+const rawQuestions = [
+  {q:"Ajdodlar ruhiga sig'inishning mohiyati nima?",o:["Bu-odamlar guruhi bilan yoki o'simliklarning muayyan turi o'rtasida g'ayritabiiy aloqalar borligiga e'tiqod.","Bu odamlar va ularning o'lgan ajdodlari o'rtasida g'ayritabiiy aloqalar saqlanib qolishiga e'tiqod qilish","Bu – dehqonchilikning holatiga ta'sir qiluvchi tabiat hodisalarini g'ayritabiiy xususiyatlarga ega deb e'tiqod qilish","Bu – qabila boshliqlarida boshqa qolgan odamlarda yo'q bo'lgan g'ayritabiiy xususiyatlar borligiga ishonch"],a:1},
+  {q:"Din so'zi qaysi tildan olingan va qanday ma'noni bildiradi?",o:["Lotin tilidan olingan bo'lib, «ishonch» degan ma'noni bildiradi.","Yunoncha so'z bo'lib, «e'tiqod» degan ma'noni bildiradi.","Arab tilidan olingan bo'lib, «qiroat» ma'nosini bildiradi.","Arab tilidan olingan bo'lib, «ishonch», «e'tiqod» ma'nolarini bildiradi."],a:3},
+  {q:"Dinning jamiyatda bajaradigan funksiyalaridan qaysi biri kompensatorlik funksiyasi?",o:["Integratorlik","Kommunikativ","Kompensatorlik","Regulyatorlik"],a:2},
+  {q:"Dinning qanday ibtidoiy shakllarini bilasiz?",o:["Vedizm, Rigveda, Samaveda, Yajurveda","Totemizm, Animizm, Fetishizm, Shamanizm, Brahmanlik","Totemizm, Shamanizm, Animizm, Fetishizm","Fetishizm, Shamanizm, Magiya, Samaveda"],a:2},
+  {q:"«Ruh jon» ma'nosini anglatadigan ta'limot qaysi?",o:["Shamanizm","Animizm","Fetishizm","Totemizm"],a:1},
+  {q:"Shamanizm qanday ta'limot?",o:["Ruh (jon)ga ishonish","Ezgu va yovuz ruhlarga ishonish","Odam odamga ishonishi","G'ayritabiiy sehrgarlik rituallari bilan yovuz ruhlarni haydashga ishonish"],a:3},
+  {q:"Fetishizm qanday ta'limot?",o:["Ruh (jon)ga ishonish","Ezgu va yovuz ruhlarga ishonish","Inson va hayvon orasida g'ayritabiiy aloqa borligiga ishonish","Jonsiz predmetlarni g'ayritabiiy kuchga ega ekanligiga ishonish"],a:3},
+  {q:"«Diniy bag'rikenglik» tamoyili nimani anglatadi?",o:["Diniy amallarda berilgan imtiyoz.","Barcha din va dindorlarning qonun oldida tengligi, dindorlar va g'ayrdinlar orasidagi erkin munosabat.","E'tiqod va vijdon erkinligi","Diniy taassublik"],a:1},
+  {q:"«Din hayotdagi ijtimoiy-madaniy va ma'naviy-ruhiy muhit rang-barangligini ta'minlovchi tarixiy qadriyatlar silsilasida teng huquqli bo'g'in» deb qarash qanday davlatga xos?",o:["Demokratik davlatga","Teokratik davlatga","Aristokratik davlatga","Dunyoviy davlatga"],a:0},
+  {q:"Din dunyoviy davlat bilan murosa qila oladimi?",o:["Murosa qila olmaydi","Din demokratiyaga qarshi","Din va dunyoviylik ikki qarama-qarshi","Din dunyoviy davlat bilan nafaqat murosa qilishi, balki umummilliy yuksalish yo'lida u bilan samarali hamkorlik qilishi mumkin."],a:3},
+  {q:"Milliy dinlar to'g'ri ko'rsatilgan qatorni toping.",o:["Daosizm, hinduizm, sikxizm, sintoizm, iudaizm, konfutsiychilik.","Zardushtiylik, islom, konfutsiychilik, daosizm, sintoizm.","Iudaizm, zaroastrizm, xristianlik","Totemizm, Animizm, Fetishizm, Shomonizm"],a:0},
+  {q:"Iudaizm qanday din?",o:["Yevropaliklar dini","Jahon dini","Osiyo dini","Milliy din"],a:3},
+  {q:"Sintoizm qanday din?",o:["Xitoy milliy dini","Xindlar milliy dini","Yapon milliy dini","Eron milliy dini"],a:2},
+  {q:"Yahudiylik dini qachon va qayerda vujudga kelgan?",o:["26.000 yil muqaddam Hindistonda","Mil. avv. 2 ming yillikda Falastinda","Mil. avv. IV-III asrlarda Xitoyda","Eramizning boshida Falastinda"],a:1},
+  {q:"Yahudiylik dinining muqaddas kitoblari qaysi javobda to'g'ri ko'rsatilgan?",o:["Tavrot, Talmud","Tavrot, Injil","Tavrot, Avesto","Tavrot, Veda"],a:0},
+  {q:"Hinduizm dini ta'limoti nimaga asoslangan?",o:["Messiya-xaloskorning kelishi haqida","Kastalarga asoslangan ta'limot","Ta'limot «Dao» asosida","Olam qarama-qarshiliklar kurashi asosiga qurilgan ta'limot"],a:1},
+  {q:"Yahudiylik ta'limotiga ko'ra, olamni yaratuvchi yagona xudo kim?",o:["Iso","Siddxartha Gautama","Vishnu","Yahve"],a:3},
+  {q:"Buddaviylikning muqaddas kitobi qaysi javobda to'g'ri ko'rsatilgan?",o:["Tavrot","Avesto","Injil","Tripitaka"],a:3},
+  {q:"Yahudiylik dinida ruhoniy kim deb ataladi?",o:["Monax","Pop","Ravin","Papa"],a:2},
+  {q:"Daosizm asoschisi kim?",o:["Lao-Tszi","Konfutsiy","Zardusht","Budda"],a:0},
+  {q:"Avesto qaysi dinning muqaddas kitobi?",o:["Musulmonlarning","Zardushtiylikning","Xristianlarning","Buddistlar va yahudiylarning"],a:1},
+  {q:"Zardushtiylik ta'limotidagi eng oliy ilohi qaysi javobda ko'rsatilgan?",o:["Axriman","Axrumazda","Shatra varyo","Suv, havo, olov, tuproq"],a:1},
+  {q:"Zardushtiylikning muqaddas kitobi «Avesto» qaysi tilda yozilgan?",o:["Qadimiy paxlaviy","Qadimgi fors","Qadimgi turk","Qadimgi xurit"],a:0},
+  {q:"Zardushtiylikning ezgulik xudosi qaysi?",o:["Mitra","Axriman","Axuramazda","Zevs"],a:2},
+  {q:"Zardushtiylikning yovuzlik xudosi qaysi?",o:["Mitra","Axriman","Axuramazda","Zevs"],a:1},
+  {q:"Zardushtiylik qaysi hududda paydo bo'lgan?",o:["Xorazm","Toshkent","Samarqand","Qarshi"],a:0},
+  {q:"Zardushtiylikda muqaddas sanalgan to'rt unsur qaysilar?",o:["yer, suv, olov, quyosh","yer, daraxt, olov, quyosh","yer, suv, havo, olov","olov, suv, o't-o'lanlar, havo"],a:2},
+  {q:"«Avesto» kitobini fransuz tiliga tarjima qilgan olimning ismi nima?",o:["D.J.Braun","M.Moys","A.Dyperon","J.Lok"],a:2},
+  {q:"Buddizmdagi asosiy yo'nalishlarni belgilang.",o:["Xinayana, maxayana, lamaizm","Xinayana, maxayana, neobuddizm, metobuddizm","Tontrizm, sansara, karma, nimayana","Monizm, baptizm, metobuddizm"],a:0},
+  {q:"Buddaviylikning muqaddas manbai «Tripitaka» so'zining ma'nosi nima?",o:["Uch odam","Uch dunyo","Uch daraxt","Uch savat donolik"],a:3},
+  {q:"«Budda» so'zining lug'aviy ma'nosi nima?",o:["Nurlangan","Yorug'","Sirlangan","Nurafshon"],a:0},
+  {q:"Buddizmning asoschisi kim?",o:["Lao-Szi","Ramayana","Krishna","Siddxartha Gautama"],a:3},
+  {q:"Buddaviylik qachon va qaerda vujudga kelgan?",o:["Eramizning I asrida Rimda","Eramizdan avvalgi VI-V asrlarda Hindistonda","Eramizdan avvalgi II-III asrlarda Falastinda","V-VI asrlarda Saudiya Arabistonda"],a:1},
+  {q:"Eng qadimgi jahon dini qaysi?",o:["Nasroniylik","Islom","Buddizm","Yahudiylik"],a:2},
+  {q:"Qaysi sulola hukmronligi davrida Movarounnahrda buddizm dini davlat diniga aylandi?",o:["Shayboniylar davrida","Somoniylar davrida","Turk xoqonligi davrida","Kushonlar davrida"],a:3},
+  {q:"Buddizm dinga e'tiqod qiladigan kishining asosiy maqsadi nima?",o:["Nirvanaga erishish","«Muqaddas qadamjolar»ga sig'inish","Rohiblikni qabul qilish","Qayta tug'ilish zanjiridan o'tish"],a:0},
+  {q:"«Siddhartha» so'zining lug'aviy ma'nosi nima?",o:["Nurlangan","Yorug'","Sirlangan","Ezguliklar keltiruvchi"],a:3},
+  {q:"«Messiya» - so'zining ma'nosi nima?",o:["Qo'shiqchi","Xaloskor","Elchi","Payg'ambar"],a:1},
+  {q:"Xristianlik qachon va qayerda vujudga keldi?",o:["II asrda Shimoliy Amerikada","Eramizning boshlarida Hindistonda","Eramizdan oldingi birinchi asrda Arabiston yerlarida","Eramizning boshida Falastin yerlarida"],a:3},
+  {q:"Xristianlik dinining asoschisi?",o:["Muso","Iso","Muhammad","Budda"],a:1},
+  {q:"Xristianlarning muqaddas kitobi qaysi?",o:["Tavrot","Qur'on","Tripikata","Bibliya"],a:3},
+  {q:"Xristianlik qachon katolilik va pravoslavlikka bo'lindi?",o:["1054 yil","1517 yil","1085 yil","1518 yil"],a:0},
+  {q:"Martin Lyuter kim?",o:["Birinchi Rim papasi","Protestantlar yetakchisi","Katoliklar boshlig'i","Pravoslavlar"],a:1},
+  {q:"Katolik cherkovi markazi qayerda joylashgan?",o:["Rimda","Vatikanda","Konstantinopolda","Aleksandriyada"],a:1},
+  {q:"Papa kim tomonidan va qancha muddatga saylanadi?",o:["Kardinallar tomonidan umrbod muddatga saylanadi","Rim kuriyasi tomonidan o'n yil muddatga saylanadi","Fuqarolar tomonidan 5 yil muddatga saylanadi","Ruhoniylar tomonidan 8 yil muddatga saylanadi"],a:0},
+  {q:"Qur'onda nechta sura bor?",o:["110 ta","115 ta","114 ta","119 ta"],a:2},
+  {q:"Islomgacha bo'lgan davr qanday nomlanadi?",o:["Ma'rifat davri","Ma'naviyat davri","Turg'unlik davri","Johiliyat davri"],a:3},
+  {q:"Islom dini qachon paydo bo'lgan?",o:["VI asrda","VII asrda","V asrda","VIII asrda"],a:1},
+  {q:"Kimlar «shahid» deyiladi?",o:["O'zini din yo'liga bag'ishlaganlar","Tarki dunyo qilgan kishilar","Din yo'lida jang qilganlar","Din yo'lida jang qilib, qurbon bo'lganlar"],a:3},
+  {q:"Jabroil kim?",o:["Jon oluvchi farishta","So'roq qiluvchi farishta","Allohdan xabar keltiruvchi farishta","Xabar keltiruvchi va Muhammad (s.a.v)ning jonini olgan farishta"],a:2},
+  {q:"Qur'on qancha muddat davomida nozil bo'lgan?",o:["25 yil","30 yil","23 yil","28 yil"],a:2},
+  {q:"«Ansor» so'zi kimlarga nisbatan ishlatiladi?",o:["Makkadan Madinaga ko'chib borganlarga","Madinalik islomni qabul qilganlarga","Islomni qabul qilgan qabilalarga","Uhud tog'i etagida (625 y.) bo'lgan jangda qatnashganlarga"],a:1},
+  {q:"Shariat nima?",o:["Diniy qonun-qoidalar to'plami.","To'g'ri yo'l, ilohiy yo'l, qonunchilik, unda sof huquqiy masalalardan tashqari axloqiy normalar va amaliy diniy talablarga ham qonun tusi berilgan.","Diniy – axloqiy qarashlar majmui.","Diniy mazxab"],a:1},
+  {q:"Payg'ambarimiz davridagi keyingi to'rt xalifa?",o:["Abu Bakr Siddiq, Abu Sufyon, Usmon ibn Affon, Zayd ibn Sobit","Abu Bakr Siddiq, Umar ibn Xattob, Zayd ibn Sobit, Ali ibn Abu Tolib","Abu Bakr Siddiq, Umar ibn Hattob, Usmon ibn Affon, Ali ibn Abu Tolib","Abu Bakr Siddiq, Umar ibn Xattob, Abu ul-Muttalib, Usmon ibn Affon"],a:2},
+  {q:"Islom dinidagi ikki yirik oqim qaysi javobda to'g'ri ko'rsatilgan?",o:["Sunniylar va xorijiylar","Sunniylar va shomoniylar","Shialar va hanafiylar","Sunniylar va shialar"],a:3},
+  {q:"VII-asrda paydo bo'lgan musulmon davlati nima deb ataladi?",o:["Arab xalifaligi","Musulmonlar davlati","Islom imperiyasi","Arab imperiyasi"],a:0},
+  {q:"Tasavvuf ta'limotida ruhiy–ma'naviy kamolotga erishishning yo'li nimada?",o:["Haqiqat","Ma'rifat","Tariqat","Shariat"],a:0},
+  {q:"Kubroviya, Naqshbandiya, Yassaviya qaysi ta'limotning yo'nalishlari hisoblanadi?",o:["Tasavvuf","Zardushtiylik","Shialik","Sunniylik"],a:0},
+  {q:"Temuriylar davrida tasavvufning qaysi yo'nalishi mafkura darajasiga ko'tarilgan?",o:["Yassaviya","Naqshbandiya","Suxravardiya","Kubraviya"],a:1},
+  {q:"O'zbekiston Respublikasida nechta diniy konfessiya faoliyat olib boradi?",o:["16 ta","6 ta","20 ta","18 ta"],a:0},
+  {q:"«Konfessiya» so'zining ma'nosi to'g'ri ko'rsatilgan javobni toping",o:["Xudojo'ylik","Ibodat","E'tirof","Urf-odat"],a:2},
+  {q:"«E'tiqod» so'zining ma'nosi to'g'ri ko'rsatilgan javobni toping",o:["Qadriyat","An'ana","Udum","Ishonch"],a:3},
+  {q:"Davlat dindan ajratilganligiga asoslangan model – bu…",o:["Kooperatsion model","Separatsion model","Davlat-diniy tashkilot modeli","Neytralitet modeli"],a:1},
+  {q:"«Tolerantlik» so'zining ma'nosi?",o:["Bag'rikenglik","Ezgulik","Yaxshilik","Yovuzlik"],a:0},
+  {q:"«Missionerlik» so'zi qanday ma'nolarni anglatadi?",o:["Lotincha so'z bo'lib, «yuborish», «vazifa topshirish»","Grekcha so'z bo'lib, «xabardor etish», «vazifa bajarish»","Yunoncha so'z bo'lib, «ishtirok etish», «vazifa bajarish»","Inglizcha so'z bo'lib, «qabul qilish», «mas'uliyatli bo'lish»"],a:0},
+  {q:"Prozelitizm so'zining ma'nosi?",o:["To'g'ridan-to'g'ri biron bir dinga ishongan fuqaroni o'z dinidan voz kechishga va o'zga dinni qabul qilishga qaratilgan harakatlarni anglatadi","Biror diniy guruh tomonidan boshqalarni o'z diniga targ'ib qilish uchun yuborilgan inson","Biror diniy birlashma vakillarining o'z e'tiqodini boshqa din vakillari orasida yoyish harakati","To'g'ri javob yo'q"],a:0},
+  {q:"Faqat o'zini haq din, insonlarni najotga yetkazuvchi deb da'vo qiladigan, aslida esa muayyan siyosiy va iqtisodiy maqsadlarni ko'zlaydigan guruh qanday nomlanadi?",o:["Oqim","Konfessiya","Sekta","Yo'nalish"],a:2},
+  {q:"Aholining keng qatlamlarida vahima va qo'rquv uyg'otish, jamiyatda beqarorlik keltirib chiqarish orqali davlat hokimiyatini egallash maqsadiga qaratilgan jinoiy faoliyat nima deb ataladi?",o:["Terrorizm","Fashizm","Fundamentalizm","Mutaassiblik"],a:0},
+  {q:"«Terror» so'zining ma'nosi to'g'ri ko'rsatilgan javobni toping",o:["Qasos","Qo'rquv, dahshat","Baxt-saodat","Tinchlik"],a:1},
+  {q:"«Fundamentalizm» so'zining ma'nosi?",o:["Qaytish","Asos","Zo'ravonlik","Ishonch"],a:1},
+  {q:"«Ekstremizm» so'zining ma'nosi?",o:["G'uluv ketish","Rad etish","Ashaddiy","Izdan chiqish"],a:2},
+  {q:"Toshkent shahrida nechinchi yilda terrorchilik harakati sodir etilgan?",o:["1999-yil","1991-yil","2001-yil","1996-yil"],a:0},
+  {q:"2005-yil 12-13-may kunlari Andijonda sodir etilgan terrorchilik harakati qaysi guruh tomonidan amalga oshirilgan?",o:["Akromiylar","Vahobiylar","Islom uyg'onish partiyasi","Hizbulloh"],a:0},
+  {q:"BMTning terrorizmga qarshi kurash komiteti qachon tuzilgan?",o:["2005-yilda","2001-yilda","1997-yilda","1971-yilda"],a:1},
+  {q:"Bugungi kunda dunyoda qancha terrorchilik tashkilotlari faoliyat yuritadi?",o:["500 ga yaqin","100 ga yaqin","1000 dan ortiq","700 ga yaqin"],a:0},
+  {q:"«Kibermakon» so'zining ma'nosi nima?",o:["Virtual makon, voqelik","Kompyuter ichidagi o'yin","Ijtimoiy tarmoq","Kompyuterdagi robotlar va mexanizmlar"],a:0},
+  {q:"«Kibermakon» tushunchasi birinchi marotaba nechanchi yilda iste'molga kiritilgan?",o:["1992-yil","1972-yil","1982-yil","2002-yil"],a:2},
+  {q:"«Kibermakon» so'zi ilk bor kim tomonidan qo'llangan?",o:["I.Kant","U.Gibson","G.Spenser","R.Otto"],a:1},
+  {q:"Internet orqali ta'qib etish ilmiy tilda qanday nomlanadi?",o:["Terror","Grifing","Tahdid","Axborot hujumi"],a:1},
+  {q:"Yahve shohidlari yo'nalishiga qachon Charlz Teyz Rassel tomonidan asos solingan?",o:["2000-yilda","1897-yilda","1973-yilda","1873-yilda"],a:3},
+  {q:"Shanxay Hamkorlik tashkiloti doirasidagi Aksilterror markazi qaysi shaharda joylashgan?",o:["Dushanbeda","Toshkentda","Beshkekda","Shanxayda"],a:1},
+  {q:"Toshkent shahriga 2007 yilda qaysi tashkilot tomonidan «Islom madaniyati poytaxti» degan nom berilgan?",o:["YUNESKO","AYSESKO","MAGATE","YUNISEF"],a:1},
+  {q:"O'zbekiston Respublikasi Prezidenti Sh.Mirziyoyev tomonidan «Ma'rifat va diniy bag'rikenglik» g'oyasi BMTning nechinchi sessiyasida ilgari surilgan?",o:["48-sessiyasida","75-sessiyasida","72-sessiyasida","70-sessiyasida"],a:2},
+  {q:"«Din» so'zi qanday ma'noni bildiradi?",o:["Ishonch, e'tiqod, itoat qilish","Qarzdor bo'lish, marosim, madaniyat","Jazo, mukofot, ma'naviyat","Hukm, qudrat, hokimiyat"],a:0},
+  {q:"Atrof olamdagi narsalarda ruh bor deb e'tiqod qilish qaysi diniy tasavvurning xususiyati?",o:["Animizm","Fetishizm","Totemizm","Sehrgarlik"],a:0},
+  {q:"Jonsiz buyumlarda kishini o'z maqsadiga erishtirish qudrati mavjud deb e'tiqod qilish, bu...?",o:["Fetishizm","Totemizm","Animizm","Shomonizm"],a:0},
+  {q:"Dinning regulyatorlik funksiyasi bu…?",o:["Aloqa bog'lash","Tartibga solish","Birlashtirish","Taskin berish"],a:1},
+  {q:"Dinning integratorlik funksiyasi bu…?",o:["Aloqa bog'lash","Tartibga solish","Birlashtirish","Taskin berish"],a:2},
+  {q:"Dinning kompensatorlik funksiyasi bu…?",o:["Aloqa bog'lash","Tartibga solish","Birlashtirish","Taskin berish"],a:3},
+  {q:"Hinduiylik diniga xos bo'lgan eng katta xususiyat bu…?",o:["Kast tizimi","Olovni muqaddas bilish","Bir vaqtda bir nechta dinga e'tiqod qilish","Xudolarni faqat inson qiyofasida tasavvur qilish"],a:0},
+  {q:"Xristianlikdagi protestantizm oqimi asoschisi kim?",o:["J.Kalvin","M.Lyuter","F.Shleyermaxer","D.Bonxeffer"],a:1},
+  {q:"Muhammad Payg'ambar (s.a.v.) ning Makkadan Madinaga hijratlari milodiy qaysi sanaga to'g'ri keladi?",o:["610","620","632","622"],a:3},
+  {q:"Qur'on suralari qanday qismlarga bo'linadi?",o:["Katta va kichik","Buyruq va qaytariq","Tavhid va hukm","Makka va Madina suralari"],a:3},
+  {q:"Bibliya qanday qismlardan iborat?",o:["Besh kitob, Apokalipsis","Tavrot va talmud","Eski ahd va Yangi ahd","Yangi ahd va Tavrot"],a:2},
+  {q:"«Islom» so'zining ma'nosi nima?",o:["Tinchlik, omonlik","Sajda qilish, tavba qilish","Duo qilish, yaxshilik","Namoz o'qish, e'tiqod"],a:0},
+  {q:"«Xushxabar» deb tarjima qilingan nasroniylikning muqaddas kitoblaridan biri…?",o:["Injil","Talmud","Bibliya","Tavrot"],a:0},
+  {q:"E'tiqod qiluvchilarning soniga ko'ra eng katta jahon dini qaysi?",o:["Xristianlik","Buddizm","Islom","Hinduiylik"],a:0},
+  {q:"Xristianlikning qaysi oqimi G'arbiy Yevropa va Lotin Amerikasida eng ko'p tarqalgan?",o:["Katolik","Pravoslav","Baptizm","Protestantlik"],a:0},
+  {q:"Jahonda e'tiqod qiluvchilari soni jihatidan eng katta milliy din qaysi?",o:["Hinduizm","Iudaizm","Sintoizm","Daosizm"],a:0},
+  {q:"Daolikning asoschisi kim?",o:["Pan Gu","Lao Szi","Kun Szi","Kung Fu"],a:1},
+  {q:"Hinduizm dinidagi oliy xudo?",o:["Shiva","Braxma","Vishnu","Krishna"],a:1},
+  {q:"Qaysi din ta'limotida «to'rt haqiqat» mavjud?",o:["Xristianlik","Buddaviylik","Yahudiylik","Hinduizm"],a:1},
+  {q:"Odamning hayvonot yoki o'simlikning muayyan turlariga qarindoshlik aloqasi bor deb e'tiqod qilish, bu...?",o:["Animizm","Totemizm","Fetishizm","Shomonizm"],a:1},
+  {q:"Dinshunoslik fani sohalari?",o:["Din sotsiologiyasi, Din adabiyoti, Din tarixi, Din fenomenologiyasi","Din antropologiyasi, Din tarbiyasi, Din falsafasi, Din tarixi","Din fenomenologiyasi, Din sotsiologiyasi, Din psixologiyasi, Din falsafasi","Din falsafasi, Din psixologiyasi, Din madaniyati, Din fenomenologiyasi"],a:2},
+  {q:"Dinning kommunikativlik funksiyasi bu…?",o:["Aloqa bog'lash","Tartibga solish","Birlashtirish","Taskin berish"],a:0},
+  {q:"Dinning legitimlik funksiyasi bu…?",o:["Qonuniylashtirish","Tartibga solish","Birlashtirish","Taskin berish"],a:0},
+  {q:"Milliy dinlar nima bilan xarakterlanadi?",o:["Ko'p hududlarga tarqalgan, irq, millat va til ajratmaydi","Kam hududga tarqalgan bo'lsa ham e'tiqod qiluvchilari ko'p","Boshqa millat vakillarini ham o'ziga qabul qiladi","Bir millatga mansub bo'ladi"],a:3},
+  {q:"Milliy dinlarga qaysi dinlar kiradi?",o:["Yahudiylik, hinduiylik, konfutsiylik, daochilik, sintoiylik","Yahudiylik, buddaviylik, konfutsiylik, zardushtiylik, shomonizm","Jayniylik, buddaviylik, konfutsiylik, brahmanlik, protestantlik","Yahudiylik, zardushtiylik, xristianlik, buddaviylik, sintoiylik"],a:0},
+  {q:"Hinduizm dinidagi «trimurti» tushunchasi nimani anglatadi?",o:["Xudolar uchligi","Kasta tizimidagi dastlabki uch pog'ona","Din ichidan ajralib chiqqan asosiy uch yo'nalish","Uchta kitob"],a:0},
+  {q:"Jahon dinlariga qaysi dinlar kiradi?",o:["Buddizm, Xristianlik, Islom","Konfutsiylik, Xristianlik, Islom","Yahudiylik, Xristianlik, Budizm","Yahudiylik, Xristianlik, Islom"],a:0},
+  {q:"Nasroniylik qachon rim imperiyasining davlat diniga aylandi?",o:["Eramizning IV-asrida","Eramizning I-asrida","Eramizning XI-asrida","Eramizning II-asrida"],a:0},
+  {q:"Buddizm dini qachon paydo bo'ldi?",o:["Miloddan avv. VIII asrda","Miloddan avv. VI-V asrda","Milodning I asrida","Miloddan avv. XIII asrda"],a:1},
+  {q:"S. Gautama haqiqatni anglashda necha kun daraxt tagida o'tirdi?",o:["44 kun","49 kun","55 kun","30 kun"],a:1},
+  {q:"Konfutsiychilikning asoschisi kim?",o:["Pan Gu","Lao Szi","Kun Szi","Kung Fu"],a:2},
+  {q:"Yahudiylik ta'limotida ular bilishi kerak bo'lgan ko'rsatmalar qanchani tashkil etadi?",o:["613 ta","546 ta","248","365"],a:0},
+  {q:"Konfutsiyning shogirdlari soni qancha bo'lgan?",o:["3 mingga yaqin","72 ta","1000 dan ortiq","Shogirdlari bo'lmagan"],a:0},
+  {q:"Pul evaziga gunohlarni kechirish - indulgensiya haqidagi ta'limot xristianlikning qaysi yo'nalishida mavjud?",o:["Protestantlik","Pravoslavlik","Kalvinizm","Katolik"],a:3},
+  {q:"Buddaviy rohiblar jamoasi nima deb ataladi?",o:["Djinna","Sangha","Boddixisatva","Lama"],a:1},
+  {q:"Buddaviylik ta'limotida «Axloq normalari» nima deb ataladi?",o:["Meditatsiya","Nirvana","Dxarma","Pancha shila"],a:3},
+  {q:"Xristianlikning rasman Katolik va Pravoslav oqimlariga bo'linib ketishi qachon ro'y berdi?",o:["451-yilda","395-yilda","1517-yilda","1054-yilda"],a:3},
+  {q:"«Hadis» so'zining lug'aviy ma'nosi?",o:["So'z, xabar, yangi narsa","Suxbat, munozara, so'z","Hikoya, munojat, qissa","Munojat, duo, iltijo"],a:0},
+  {q:"Sunniylik yo'nalishiga mansub 4 ta fiqhiy mazhab to'g'ri ko'rsatilgan javobni toping?",o:["Shialik, Xorijiylik, Salafiylik, Mo'taziliylik","Moturidiylik, Ash'ariylik, Shialik, Shofeiylik","Hanafiylik, Molikiylik, Shofeiylik, Xanbaliylik","Hanafiylik, Ashariylik, Shialik, Xanbaliylik"],a:2},
+  {q:"Sunniylik yo'nalishiga mansub 2 ta aqidaviy ta'limot to'g'ri ko'rsatilgan javobni toping?",o:["Molikiylik, Ash'ariylik","Moturidiylik, Ash'ariylik","Moturidiylik, Hanafiylik","Ash'ariylik, Shofeiylik"],a:1},
+  {q:"Sunniylik yo'nalishiga mansub Hanafiylik fiqhiy mazhabi asoschisi kim?",o:["No'mon ibn Sobit","Muhammad ibn Idris","Ahmad ibn Hanbal","Molik ibn Anas"],a:0},
+  {q:"Tasavvufdagi qaysi tariqatlar Markaziy Osiyoda keng tarqalgan?",o:["Naqshbandiya, Yassaviya","Mavlaviya, Chishtiya","Qodiriya, Bektoshiya","Xalvatiya, Suhravardiya"],a:0},
+  {q:"Yangi diniy harakatlar (YaDH) deganda odatda qaysi davrdan boshlab paydo bo'lgan noan'anaviy diniy guruhlar tushuniladi?",o:["XIX asrning 70-yillaridan","XX asrning 70-yillaridan","XIX asrning 80-yillaridan","XX asrning 80-yillaridan"],a:1},
+  {q:"Islomning qanday asosiy yo'nalishlari bor?",o:["Sunniylik va shialik","Sunniylik va Motrudiylik","Sunniylik va Ash'ariylik","Sunniylik va Hanafiylik"],a:0},
+  {q:"Xristianlikning qaysi oqimi Sharqiy Yevropa, Yaqin Sharq hamda Bolqon mamlakatlarida keng tarqalgan?",o:["Pravoslav","Katolik","Kalvinizm","Protestantizm"],a:0},
+  {q:"Quyidagi dinlardan qaysi biri milliy dinlar qatoriga kiradi?",o:["Zardushtiylik","Baxoiylik","Daolik","Buddaviylik"],a:2},
+  {q:"Taqinchoq, narsa va buyumlar baxt va omad olib keladi deya ishonish qaysi ibtidoiy diniy tasavvurga kiradi?",o:["Animizm","Totemizm","Fetishizm","Shamanizm"],a:2},
+  {q:"Islom dinidan ilk ajralib chiqqan ekstremistik, terroristik oqim «Xorijiylar» qaysi voqea sabab ajralib chiqdilar?",o:["«Jamal voqeasi» sabab","«Taxkim voqeasi» sabab","«Karbalo voqeasi» sabab","«Ridda» urushlari sabab"],a:1},
+  {q:"«Nixongi» qaysi dinning muqaddas kitobi sanaladi?",o:["Sintoiylik","Buddaviylik","Konfutsiylik","Daolik"],a:0},
+  {q:"«Besh klassika» va «To'rt kitob». Ushbu manbalar qaysi dinga tegishli?",o:["Sintoiylik","Daolik","Buddaviylik","Konfutsiylik"],a:3},
+];
+
+let questions = [];
+let current = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+let shuffleOn = true;
+
+function toggleShuffle() {
+  shuffleOn = !shuffleOn;
+  const t = document.getElementById('shuffleToggle');
+  const l = document.getElementById('shuffleLabel');
+  t.className = 'toggle' + (shuffleOn ? ' on' : '');
+  l.textContent = 'Savollarni aralashtirish: ' + (shuffleOn ? 'Yoqilgan' : 'O\'chirilgan');
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startQuiz() {
+  questions = shuffleOn ? shuffle([...rawQuestions]) : [...rawQuestions];
+  current = 0; correct = 0; wrong = 0;
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+
+  document.getElementById('qCounter').textContent = `${current + 1}/${total}`;
+  document.getElementById('correctCount').textContent = correct;
+  document.getElementById('wrongCount').textContent = wrong;
+  const pct = current > 0 ? Math.round(correct / current * 100) : 0;
+  document.getElementById('scorePercent').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = ((current / total) * 100) + '%';
+  document.getElementById('qNumber').textContent = `SAVOL ${current + 1}`;
+  document.getElementById('qText').textContent = q.q;
+
+  const letters = ['A', 'B', 'C', 'D'];
+  // Shuffle options with answer tracking
+  let indices = [0, 1, 2, 3];
+  if (shuffleOn) indices = shuffle(indices);
+  const newCorrectIdx = indices.indexOf(q.a);
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  indices.forEach((origIdx, displayIdx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.dataset.isCorrect = (origIdx === q.a) ? '1' : '0';
+    btn.innerHTML = `<span class="letter">${letters[displayIdx]}</span><span>${q.o[origIdx]}</span>`;
+    btn.onclick = () => selectOption(btn);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  // Re-animate card
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'slideIn 0.35s ease';
+}
+
+function selectOption(btn) {
+  if (answered) return;
+  answered = true;
+
+  const allOpts = document.querySelectorAll('.option');
+  allOpts.forEach(o => o.classList.add('disabled'));
+
+  const isCorrect = btn.dataset.isCorrect === '1';
+  const feedback = document.getElementById('feedback');
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    correct++;
+    feedback.className = 'feedback correct';
+    feedback.innerHTML = '✓ To\'g\'ri javob!';
+  } else {
+    btn.classList.add('wrong');
+    wrong++;
+    feedback.className = 'feedback wrong';
+    // Find and highlight correct
+    allOpts.forEach(o => {
+      if (o.dataset.isCorrect === '1') o.classList.add('correct');
+    });
+    feedback.innerHTML = '✗ Noto\'g\'ri. To\'g\'ri javob yashil bilan ko\'rsatildi.';
+  }
+
+  // Update score immediately
+  const total = current + 1;
+  const pct = Math.round(correct / total * 100);
+  document.getElementById('scorePercent').textContent = pct + '%';
+  document.getElementById('correctCount').textContent = correct;
+  document.getElementById('wrongCount').textContent = wrong;
+
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('quizScreen').style.display = 'none';
+  const screen = document.getElementById('resultScreen');
+  screen.style.display = 'block';
+
+  const total = questions.length;
+  const pct = Math.round(correct / total * 100);
+  document.getElementById('finalScore').textContent = pct + '%';
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rTotal').textContent = total;
+
+  let msg, sub;
+  if (pct >= 90) { msg = "A'lo natija! 🏆"; sub = "Dinshunoslik bo'yicha mukammal bilimlar!"; }
+  else if (pct >= 75) { msg = "Yaxshi natija! 👍"; sub = "Ko'p savollarni to'g'ri javobladingiz."; }
+  else if (pct >= 60) { msg = "Qoniqarli natija"; sub = "Bilimlaringizni yanada mustahkamlash kerak."; }
+  else { msg = "Yana bir urinib ko'ring"; sub = "O'qib, qaytadan sinab ko'ring!"; }
+
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('resultSub').textContent = sub;
+}
+
+function restartQuiz() {
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+}
+</script>
+</body>
+</html>
