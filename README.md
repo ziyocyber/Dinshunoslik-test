@@ -1,1 +1,1 @@
-# Dinshunoslik-test
+# Sessiya-test
