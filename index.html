@@ -6,7 +6,7 @@
 <title>Test Markazi</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
-:root{--bg:#0d0d0f;--surface:#16161a;--border:#2a2a32;--accent:#c9a84c;--accent2:#e8c96a;--text:#e8e8e0;--muted:#7a7a88;--correct:#4caf88;--wrong:#e05c5c;--correct-bg:#1a2e28;--wrong-bg:#2e1a1a;--blue:#5b8dee;--blue2:#7aa3f5;}
+:root{--bg:#0d0d0f;--surface:#16161a;--border:#2a2a32;--accent:#c9a84c;--accent2:#e8c96a;--text:#e8e8e0;--muted:#7a7a88;--correct:#4caf88;--wrong:#e05c5c;--correct-bg:#1a2e28;--wrong-bg:#2e1a1a;--blue:#5b8dee;--blue2:#7aa3f5;--purple:#a855f7;--purple2:#c084fc;--green:#10b981;--green2:#34d399;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;}
 .container{width:100%;max-width:720px;position:relative;}
@@ -31,7 +31,7 @@ header h1 span{color:var(--accent);}
 .shuffle-toggle{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;font-size:14px;color:var(--muted);cursor:pointer;}
 .toggle{width:40px;height:22px;background:var(--border);border-radius:11px;position:relative;transition:background 0.2s;}
 .toggle.on{background:var(--accent);}
-.toggle.on.blue{background:var(--blue);}
+.toggle.on.blue{background:var(--blue);}.toggle.on.purple{background:var(--purple);}.toggle.on.green{background:var(--green);}
 .toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform 0.2s;}
 .toggle.on::after{transform:translateX(18px);}
 .btn-start{padding:18px 50px;background:var(--accent);color:#0d0d0f;border:none;border-radius:12px;font-family:'IBM Plex Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:1px;}
@@ -45,10 +45,10 @@ header h1 span{color:var(--accent);}
 .sv-correct{color:var(--correct);}
 .sv-wrong{color:var(--wrong);}
 .sv-accent{color:var(--accent);}
-.sv-blue{color:var(--blue);}
+.sv-blue{color:var(--blue);}.sv-purple{color:var(--purple);}.sv-green{color:var(--green);}
 .progress-wrap{height:3px;background:var(--border);border-radius:2px;margin-bottom:28px;overflow:hidden;}
 .progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width 0.4s ease;}
-.progress-bar.blue{background:linear-gradient(90deg,var(--blue),var(--blue2));}
+.progress-bar.blue{background:linear-gradient(90deg,var(--blue),var(--blue2));}.progress-bar.purple{background:linear-gradient(90deg,var(--purple),var(--purple2));}.progress-bar.green{background:linear-gradient(90deg,var(--green),var(--green2));}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;margin-bottom:20px;animation:slideIn 0.35s ease;}
 @keyframes slideIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 .q-number{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
@@ -57,10 +57,10 @@ header h1 span{color:var(--accent);}
 .option{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;background:var(--bg);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.18s ease;text-align:left;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:15px;line-height:1.5;}
 .option:hover:not(.disabled){background:#1a1a20;transform:translateX(3px);}
 .din-opt:hover:not(.disabled){border-color:var(--accent);}
-.eng-opt:hover:not(.disabled){border-color:var(--blue);}
+.eng-opt:hover:not(.disabled){border-color:var(--blue);}.hisob-opt:hover:not(.disabled){border-color:var(--purple);}.algo-opt:hover:not(.disabled){border-color:var(--green);}
 .option .letter{min-width:26px;height:26px;border-radius:6px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);flex-shrink:0;transition:all 0.18s;}
 .din-opt:hover:not(.disabled) .letter{background:var(--accent);color:#000;}
-.eng-opt:hover:not(.disabled) .letter{background:var(--blue);color:#fff;}
+.eng-opt:hover:not(.disabled) .letter{background:var(--blue);color:#fff;}.hisob-opt:hover:not(.disabled) .letter{background:var(--purple);color:#fff;}.algo-opt:hover:not(.disabled) .letter{background:var(--green);color:#fff;}
 .option.correct{border-color:var(--correct);background:var(--correct-bg);}
 .option.correct .letter{background:var(--correct);color:#fff;}
 .option.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
@@ -98,16 +98,26 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:30px 0 20px;}
   </header>
 
   <div id="subjectScreen">
-    <div class="subjects">
+    <div class="subjects" style="grid-template-columns:1fr 1fr;gap:14px;">
       <div class="subject-card din" onclick="showStart('din')">
         <div class="icon">🕌</div>
         <div class="sname">Dinshunoslik</div>
-        <div class="count">54 SAVOL</div>
+        <div class="count">80 SAVOL</div>
       </div>
       <div class="subject-card english" onclick="showStart('english')">
         <div class="icon">🇬🇧</div>
         <div class="sname">Ingliz tili</div>
         <div class="count">293 SAVOL</div>
+      </div>
+      <div class="subject-card" style="border-color:#2a2a32;" onclick="showStart('hisob')">
+        <div class="icon">📐</div>
+        <div class="sname" style="color:#a855f7;">Hisob</div>
+        <div class="count">133 SAVOL</div>
+      </div>
+      <div class="subject-card" style="border-color:#2a2a32;" onclick="showStart('algo')">
+        <div class="icon">💻</div>
+        <div class="sname" style="color:#10b981;">Ma'lumotlar tuzilmasi</div>
+        <div class="count">62 SAVOL</div>
       </div>
     </div>
   </div>
@@ -557,6 +567,207 @@ const engQuestions = [
   {q:"By next year, I _____ English in London.",o:["study","studied","will be studying","studying"],a:2},
 ];
 
+const hisobQuestions = [
+  {q:"Agar x va y o'zgaruvchilarning har bir (x,y) qiymatlar juftiga z o'zgaruvchining aniq bir qiymati mos kelsa, z o'zgaruvchi x va y o'zgaruvchilarning ... deyiladi?",o:["limiti","funksiyasi","hosilasi","To'g'ri javob keltirilmagan"],a:1},
+  {q:"z=f(x,y) funksiyaning x va y argumentlari qabul qiladigan qiymatlar to'plami funksiyaning nimasi deyiladi?",o:["A hodisaning ehtimoli","aniqlanish sohasi","o'zgarish sohasi","To'g'ri javob keltirilmagan"],a:1},
+  {q:"z=f(x,y) funksiyaning geometrik tasviri umumiy holda nimadan iborat?",o:["sirtdan","tekislikdan","nuqtadan","P = n − 2m"],a:0},
+  {q:"z=xy funksiya qanday nuqtada aniqlanmagan?",o:["x=0, y=0","1ta yechimga ega bo'ladi","Cheksiz yechimga ega bo'ladi","x=2, y=1"],a:0},
+  {q:"F(x,y) = 2x + y² funksiya uchun F(1,2) ni toping.",o:["0","4","3","40"],a:1},
+  {q:"z=f(x,y) funksiyaning (x₀,y₀) nuqtada uzluksizligi ta'rifining matematik ifodasini ko'rsating.",o:["lim f(x,y) = f(x₀,y₀)","0 = f(x,y)","Cheksiz yechimga ega bo'ladi","180"],a:0},
+  {q:"z=f(x,y) funksiyaning x o'zgaruvchi bo'yicha xususiy hosilasi ta'rifining matematik ifodasini ko'rsating.",o:["An_m = n + m","∂z/∂x = lim[f(x+Δx,y) - f(x,y)]/Δx","An_m = n - m","lim f(x+Δx,y)/Δx"],a:1},
+  {q:"z = y/x bo'lsa, ∂z/∂y ni toping.",o:["x","m-n","0","To'g'ri javob keltirilmagan"],a:0},
+  {q:"z = x³ + 3y² funksiyaning to'la differensiali dz ni toping.",o:["dz = 2·3x² dx","dz = 3x²dx + 6y dy","0","mn"],a:1},
+  {q:"u = 3x² + 3z² funksiyaning u'y xususiy hosilasini toping.",o:["3z²","Ayirmalar","0","To'g'ri javob berilmagan"],a:0},
+  {q:"z=f(x,y) funksiyaning to'la differensiali qanday formula bilan topiladi?",o:["0","dz = (∂z/∂x)dx + (∂z/∂y)dy","dz = (∂z/∂y)dy","1"],a:1},
+  {q:"Oshkormas shaklda berilgan F(x,y) = 0 funksiyaning xususiy hosilasi dy/dx nimaga teng?",o:["0","F'x / F'y","-F'x / F'y","1"],a:2},
+  {q:"Differensiallanuvchi z=f(x,y) funksiya (x,y) nuqtada ekstremumga ega bo'lsa, bu nuqtada qanday shart bajariladi?",o:["0","∂z/∂x = 0, ∂z/∂y = 0","∂z/∂x = ∂z/∂y","1"],a:1},
+  {q:"Δ = AC - B² > 0 va A < 0 bo'lsa, funksiya M₀ nuqtada qanday ekstremumga ega bo'ladi?",o:["Δ > 0, A > 0","Δ > 0, A < 0","Δ < 0, A < 0","1"],a:1},
+  {q:"Δ = AC - B² bo'lsa, Δ ning qanday qiymatida funksiya M₀ nuqtada ekstremumga ega bo'lmaydi?",o:["Δ > 0","Δ < 0","Δ = 0","1"],a:2},
+  {q:"u₁, u₂, u₃, ... uₙ sonlar ketma-ketligi bo'lsa, u₁+u₂+u₃+...+uₙ cheksiz yig'indiga nima deb aytiladi?",o:["0","oddiy yig'indi","sonli qator","1"],a:2},
+  {q:"D sohada uzluksiz f(x,y) funksiya uchun Σf(Pᵢ)Δsᵢ ifoda ... deyiladi.",o:["Qator","1/3","Integral yig'indi","2/3"],a:2},
+  {q:"D sohada uzluksiz f(x,y) funksiya uchun ∫∫f(x,y)ds ifoda ... deyiladi.",o:["Ikki o'lchovli integral","3/5","Qator","1/2"],a:0},
+  {q:"D to'g'ri sohada uzluksiz f funksiya uchun ikki qo'shaloq integral formulasi qanday yoziladi?",o:["Aniqmas integral","Ikki karrali integral","1/8","1/16"],a:1},
+  {q:"Ikki karrali integral mavjud bo'lishi uchun funksiya qanday shartlarni qanoatlantirishi kerak?",o:["1/5","To'g'ri sohada uzluksiz bo'lishi kerak","1/3","Noto'g'ri sohada uzluksiz bo'lishi kerak"],a:1},
+  {q:"∫∫dxdy integral ... ga teng.",o:["D sohaning hajmiga","1/20","D sohaning yuziga","1/5"],a:2},
+  {q:"Integralni hisoblang: ∫₀²∫₀³ x dx dy",o:["6","1/3","2/3","4/9"],a:0},
+  {q:"ρ V jismning zichligi bo'lsa, m = ∫∫∫ρ dxdydz formula bilan nima hisoblanadi?",o:["jismning hajmi","1/3","jismning massasi","1/6"],a:2},
+  {q:"∫₀¹∫₀¹∫₀² dx dy 3dz integralni hisoblang.",o:["1/2","8","1/5","3/4"],a:1},
+  {q:"∫₀¹∫₀¹∫₀⁴ x dx dy 3dz integralni hisoblang.",o:["1/8","1","1/2","3/4"],a:1},
+  {q:"∫₀²∫₀¹∫₀² dx dy x dz integralni hisoblang.",o:["2","1/6","1/3","4"],a:0},
+  {q:"Birinchi tur egri integral yana qanday nom bilan ataladi?",o:["koordinatalar bo'yicha","uzunlik bo'yicha","To'g'ri javob keltirilmagan","Yordamchi determinantlar nolga teng bolsa"],a:1},
+  {q:"Ikkinchi tur egri integral yana qanday nom bilan ataladi?",o:["koordinatalar bo'yicha","[a,b)","karrali","(a,b]"],a:0},
+  {q:"Qaysi egri chiziqli integral integrallash yo'liga bog'liq emas?",o:["Yordamchi determinantlar noldan farqli bolsa","birinchi tur","Chekli sondagi elementlarga ega to'plamlarga","Yordamchi determinantlar nolga teng bolsa"],a:1},
+  {q:"Grin formulasini ko'rsating.",o:["∂Y/∂x - ∂X/∂y","u(x,y) = Xdx + Ydy","atrofi","∮(Xdx+Ydy) = ∬(∂Y/∂x - ∂X/∂y)dxdy"],a:3},
+  {q:"Egri chiziqli integral yordamida L oddiy yopiq chiziq bilan chegaralangan sohaning S yuzini hisoblash formulasi?",o:["Yordamchi determinantlar noldan farqli bolsa","S = ½∮(xdy - ydx)","S = 2∮xdy","Yordamchi determinantlar nolga teng bolsa"],a:1},
+  {q:"Chiziqli funksiyaning umumiy ko'rinishini toping.",o:["f(x) = kx + b, k ≠ 0","f(x) = x²","f(x) = x + 1","Yordamchi determinantlar nolga teng bolsa"],a:0},
+  {q:"f(x) funksiya x₀ nuqtadagi hosilasi ta'rifining matematik ifodasini ko'rsating.",o:["lim[f(x+Δx)-f(x)]/(x-x₀)","f'(x₀) = lim Δy/Δx (Δx→0)","lim f(x+Δx)","Yordamchi determinantlar nolga teng bolsa"],a:1},
+  {q:"y = (x+1)/(x-1) funksiyaning aniqlanish sohasini toping.",o:["(-∞,+∞)\\{-1,1}","(-∞,-1)","(-∞,1)","yechimga ega bo'lmaydi"],a:0},
+  {q:"lim(n→∞) (3n+1)/(2n²+1) limitni hisoblang.",o:["-3","3","1","2"],a:1},
+  {q:"f(x) = 7x² - 2x + 1 funksiya berilgan. f(0) = ?",o:["1","2","3","0"],a:0},
+  {q:"z = i kompleks sonni ko'rsatkichli ko'rinishda ifodalang.",o:["0","e^(iπ/2)","2","e^(2π)"],a:1},
+  {q:"z = 1 + i√3 kompleks sonning modulini toping.",o:["2","0","-1","x"],a:0},
+  {q:"f(x) = x² + 1 funksiyaning hosilasi f'(x) ni toping.",o:["-1","2x","3","-5"],a:1},
+  {q:"f(x) = x·cos(x) funksiyaning hosilasi f'(x) ni toping.",o:["1 - sin(x)","x","3x","7"],a:0},
+  {q:"z = 1 + i√3 kompleks sonning argumentini toping.",o:["5π/6","π/3","3x","-4"],a:1},
+  {q:"Quyidagi formulalardan qaysi biri Muavr formulasi?",o:["zⁿ = rⁿ(cos nφ + i sin nφ)","zⁿ = rⁿ","na toq, na juft funksiya","to'g'ri javob berilmagan"],a:0},
+  {q:"f(x) = sin(x) funksiya berilgan. Quyidagi fikrlardan qaysi biri to'g'ri?",o:["juft funksiya","toq funksiya","na toq, na juft funksiya","to'g'ri javob berilmagan"],a:1},
+  {q:"Nyuton-Leybnits formulasini ko'rsating (F funksiya f(x) ning [a,b] kesmadagi boshlang'ich funksiyasi).",o:["∫f(x)dx = a·b","∫ᵃᵇf(x)dx = F(b) - F(a)","∫f(x)dx = a - b","(3;3;3)"],a:1},
+  {q:"lim(x→4) (x² - 16)/(x - 4) limitni hisoblang.",o:["0","8","2","1"],a:1},
+  {q:"Integralni hisoblang: ∫(1 + sin x)dx",o:["x - cos x + C","cos x + C","2","6"],a:0},
+  {q:"lim(x→0) sin(3x)/x limitni hisoblang.",o:["0","3","1","4"],a:1},
+  {q:"Lopital qoidasi yordamida: lim(x→∞) ln(x)/x",o:["0","1","3","∞"],a:0},
+  {q:"y = x⁵ - 6x + 5 funksiyaning hosilasi y' ni toping.",o:["x³·5","5x⁴ - 6","x","2x"],a:1},
+  {q:"lim(n→∞) (1 + 2/n)ⁿ limitni hisoblang.",o:["e²","2","1","-1"],a:0},
+  {q:"Yopiq intervalni toping.",o:["(a,b]","[a,b]","(a,b)","[a,b)"],a:1},
+  {q:"lim(n→∞) (6n² + 5n - 1)/(1 - 2n - 3n²) limitni hisoblang.",o:["2","1","-2","3"],a:2},
+  {q:"lim(x→0) sin(5x)/x limitni hisoblang.",o:["3","5","-2","3"],a:1},
+  {q:"Integralni hisoblang: ∫(2x - 1)dx",o:["x² - x + C","2x + C","3x + C","x"],a:0},
+  {q:"Lopital qoidasi yordamida: lim(x→∞) ln²(x)/(5x)",o:["5","0","3","-1"],a:1},
+  {q:"lim(n→∞) (5n - 7)/(3 - 4n) limitni hisoblang.",o:["-1","2","3","8"],a:0},
+  {q:"y = √(x³) funksiyaning aniqlanish sohasini toping.",o:["x ≥ -3","x ≥ 3","x ≥ 0","x < 3"],a:2},
+  {q:"Agar biror oraliqda F'(x) = f(x) bo'lsa, F(x) + C munosabat f(x) funksiyaning ______ deyiladi.",o:["aniqmas integrali","limiti","chegarasi","hosilasi"],a:0},
+  {q:"Qanday funksiya juft funksiya deyiladi?",o:["f(-x) = f(x)","Aniqlanish sohasi koordinata boshiga nisbatan simmetrik bo'lib, f(-x) = f(x) tenglik bajarilsa","f(-x) = -f(x)","f(-x) ≠ f(x)"],a:1},
+  {q:"z = 4 - 3i bo'lsa, |z| ni toping.",o:["5","0","8","yaqinlashuvchi"],a:0},
+  {q:"Eyler formulasini ko'rsating.",o:["e^(-iφ) = cos φ - i sin φ","e^(iφ) = cos φ + i sin φ","chegaralanmagan","uzoqlashuvchi"],a:1},
+  {q:"y = x² funksiyaning aniqlanish sohasini toping.",o:["(-∞;∞)","(0;∞)","(-∞;0)","(-1;1)"],a:0},
+  {q:"Muavr formulasini ko'rsating.",o:["(-5;∞)","(r(cosφ+i sinφ))ⁿ = rⁿ(cos nφ + i sin nφ)","e^iφ = sin φ","(-5;5)"],a:1},
+  {q:"Teylor qatori qanday qator deyiladi?",o:["f(x) = f(a) + f'(a)(x-a) + f''(a)(x-a)²/2! + ... Teylor qatori","(-1;∞)","Koshi qatori","Makloren qatori"],a:0},
+  {q:"y = eˣ funksiyaning Makloren qatoriga yoyilmasi?",o:["cos x = 1 - x²/2! + x⁴/4! - ...","y = 1 + x + x²/2! + x³/3! + ...","cos x = 1 - x²/2! + x⁴/4!","(-1;0)"],a:1},
+  {q:"y = x³ funksiyaning burilish nuqtalarini toping.",o:["x = 1","x = 0","x = -1","x = 3"],a:1},
+  {q:"y = x³ funksiyaning botiqlik oralig'ini toping.",o:["(-1;1)","(0;∞)","(0;-1)","(-∞;1)"],a:1},
+  {q:"y = 1/(x-2) funksiyaning asimptotalarini toping.",o:["x = 2 vertikal asimptota, y = 0 gorizontal asimptota","x = -1 vertikal, y = 2 gorizontal","x = 1 vertikal, y = -1 gorizontal","x = 1 vertikal, y = -1 gorizontal"],a:0},
+  {q:"y = 1/x funksiyaning aniqlanish sohasini toping.",o:["(0;∞)","(-∞;0)∪(0;∞)","(-∞;0)","(-1;1)"],a:1},
+  {q:"y = log_a(x), (a>0, a≠1) funksiyaning aniqlanish sohasini toping.",o:["(-2;∞)","(0;∞)","(-∞;0)","(-1;2)"],a:1},
+  {q:"y = sin(x) funksiyaning qiymatlar sohasini toping.",o:["(0;∞)","[-1;1]","(-∞;0)","(-1;5)"],a:1},
+  {q:"Sonlar o'qidagi x₀ nuqtaning atrofi deb nima aytiladi?",o:["Shu nuqtani o'z ichiga oluvchi istalgan ochiq intervalga aytiladi","Shu nuqtani o'z ichiga oluvchi istalgan to'plamga aytiladi","Shu nuqtani o'z ichiga oluvchi istalgan yopiq intervalga aytiladi","Shu nuqtani o'z ichiga oluvchi istalgan yarim intervalga aytiladi"],a:0},
+  {q:"Biror nuqtada hosilaga ega funksiya bu nuqtada ______ deyiladi?",o:["differensiallanuvchi","limitga ega","davriy","uzluksiz"],a:0},
+  {q:"lim(n→∞) (5n - 9)/(2 - 3n) limitni hisoblang.",o:["2","1","3","5"],a:1},
+  {q:"y = 5x³ funksiyaning hosilasini toping.",o:["15x²","3x²","0","-1"],a:0},
+  {q:"f(x) = cos(x) - sin(x) funksiyaning hosilasi f'(x) ni toping.",o:["x","sin(x) - cos(x)","8","x+1"],a:1},
+  {q:"Integralni hisoblang: ∫(2x - cos x)dx",o:["x² - sin x + C","3x + C","x + C","4"],a:0},
+  {q:"lim(x→2) (x² - 4)/(3x - 6) limitni hisoblang.",o:["7","9","5","1"],a:2},
+  {q:"Ratsional son deb qanday songa aytiladi?",o:["Yordamchi determinantlar noldan farqli bolsa","Butun sonning natural songa nisbatiga","To'g'ri javob keltirilmagan","Yordamchi determinantlar nolga teng bolsa"],a:1},
+  {q:"Ochiq intervalni toping.",o:["(a,b)","[a,b)","[a,b]","(a,b]"],a:0},
+  {q:"Sanoqli to'plamlar deb qanday to'plamlarga aytiladi?",o:["Yordamchi determinantlar noldan farqli bolsa","Natural sonlar to'plamiga ekvivalent to'plamlarga","Chekli sondagi elementlarga ega to'plamlarga","Yordamchi determinantlar nolga teng bolsa"],a:1},
+  {q:"{xₙ} ketma-ketlik uchun |xₙ - a| < ε tengsizlik bajarilsa, a son {xₙ} ketma-ketlikning ______ deyiladi?",o:["hadi","qiymati","atrofi","limiti"],a:3},
+  {q:"3 noma'lumli 3 ta chiziqli tenglamalar sistemasi qachon yagona yechimga ega bo'ladi?",o:["Yordamchi determinantlar noldan farqli bolsa","Asosiy determinant noldan farqli bolsa","Asosiy determinant nolga teng bolsa","Yordamchi determinantlar nolga teng bolsa"],a:1},
+  {q:"f(x) = x² - x + 1 funksiya berilgan. f(3) = ?",o:["0","7","2","3"],a:1},
+  {q:"f(x) = x³ + 2 funksiyaning hosilasi f'(x) ni toping.",o:["3x²","0","-1","x"],a:0},
+  {q:"f(x) = x² funksiya berilgan. Quyidagi fikrlardan qaysi biri to'g'ri?",o:["juft funksiya","toq funksiya","na toq, na juft funksiya","to'g'ri javob berilmagan"],a:0},
+  {q:"x² + 9 = 0 tenglamani yeching.",o:["x = 3","x = -3","x = i·9","x = ±3i"],a:3},
+  {q:"Agar barcha n nomerlar uchun xₙ ≤ xₙ₊₁ tengsizliklar bajarilsa, xₙ ketma-ketlik ______ deyiladi.",o:["o'suvchi","kamayuvchi","chegaralangan","yaqinlashuvchi"],a:0},
+  {q:"Agar |xₙ| ≤ M tengsizlikni qanoatlantirsa, bunday ketma-ketlik ______ deyiladi.",o:["nolga yaqinlashuvchi","chegaralangan","chegaralanmagan","uzoqlashuvchi"],a:1},
+  {q:"y = x² funksiyaning qiymatlar sohasini toping.",o:["(-5;∞)","[0;∞)","(-∞;0)","(-5;5)"],a:1},
+  {q:"y = x² funksiyaning o'sish oralig'ini toping.",o:["[0;∞)","(-1;∞)","(-∞;1)","(-1;5)"],a:0},
+  {q:"y = x² funksiyaning kamayish oralig'ini toping.",o:["(-1;∞)","(-∞;0]","(-∞;1)","(-1;0)"],a:1},
+  {q:"y = x² - 2x funksiyaning kritik nuqtalarini toping.",o:["x = 1","x = -2","x = -1","(-1;0)"],a:0},
+  {q:"y = x³ funksiyaning qavariqlik oralig'ini toping.",o:["(-∞;0)","(-1;5)","(0;-8)","(0;+∞)"],a:0},
+  {q:"y = log_a(x), (a>0, a≠1) funksiyaning qiymatlar sohasini toping.",o:["(-∞;∞)","(0;∞)","(-∞;0)","(-1;1)"],a:0},
+  {q:"Berilgan kompleks sonlar yig'indisini aniqlang: z₁ = 3+2i, z₂ = 4-i",o:["7+i","7-2i","-7-i","7+2i"],a:0},
+  {q:"Berilgan kompleks sonlar ayirmasini aniqlang: z₁ = 3+2i, z₂ = 4-i",o:["7+i","-1+3i","-1-2i","2+i"],a:1},
+  {q:"Berilgan kompleks sonlar ko'paytmasini aniqlang: z₁ = 3+2i, z₂ = 4-i",o:["14-2i","1+4i","14+5i","1+5i"],a:2},
+  {q:"z₁/z₂ ni aniqlang: z₁ = 3+2i, z₂ = 4-i",o:["10/17 + 8/17·i","9/17 + 11/17·i","10/17","10/17 + 11/17·i"],a:3},
+  {q:"lim(x→2) (x+3)/(x+2) limitini aniqlang.",o:["5/4","1","0","4"],a:0},
+  {q:"lim(x→1) (x²+5x+4)/(x-1) limitini aniqlang.",o:["0","5","3","2"],a:1},
+  {q:"lim(x→-4) (x+4)/(x³-5x²+4x) limitini aniqlang.",o:["-1","-2","-3","0"],a:2},
+  {q:"lim(x→0) (x³-5x²+4x)/x limitini aniqlang.",o:["2","3","0","4"],a:3},
+  {q:"y = x² + 3x - cos(x) funksiyaning hosilasini aniqlang.",o:["y' = 2x + 3 + sin x","y' = 2x + 3 - sin x","y' = 2x + 3 + cos x","y' = 2 + 3x - sin x"],a:0},
+  {q:"y = sin(x)/x funksiyaning hosilasini aniqlang.",o:["(x·sin x - cos x)/x²","(x·cos x - sin x)/x²","(x·cos x + sin x)/x²","(x·cos x - sin x)/x"],a:1},
+  {q:"y = 3ˣ + 2x² - tg(x) funksiyaning hosilasini aniqlang.",o:["y' = 3ˣln3 + 4x","y' = 3ˣln3 - 1/cos²x","y' = 3ˣln3 + 4x - 1/cos²x","y' = 3ˣln3 + 4x - 1/sin²x"],a:2},
+  {q:"y = √(x² + 3x) funksiyaning hosilasini aniqlang.",o:["(2x-3)/(2√(x²+3x))","(2x+3)/(2√(x²-3x))","(2x+3)/√(x²+3x)","(2x+3)/(2√(x²+3x))"],a:3},
+  {q:"y = sin²(x) funksiyaning ikkinchi tartibli hosilasini aniqlang.",o:["y'' = 2cos(2x)","y'' = cos(2x)","y'' = 2cos x","y'' = 2cos(4x)"],a:0},
+  {q:"y = sin²(x) funksiyaning uchinchi tartibli hosilasini aniqlang.",o:["y''' = 4sin(2x)","y''' = -4sin(2x)","y''' = -4sin³x","y''' = 4cos(2x)"],a:1},
+  {q:"y = x³ + 2x² - sin(x) funksiyaning uchinchi tartibli hosilasini aniqlang.",o:["y''' = 6 + sin x","y''' = 6 - cos x","y''' = 6 + cos x","y''' = 6 - sin x"],a:2},
+  {q:"y = x³ + 2x² - sin(x) funksiyaning ikkinchi tartibli hosilasini aniqlang.",o:["y'' = 6x + 4 + cos x","y'' = 6x - 4 + cos x","y'' = 6x + 4 - sin x","y'' = 6x + 4 + sin x"],a:3},
+  {q:"z = x² + 3xy bo'lsa, ∂z/∂x = ?",o:["∂z/∂x = 2x + 3y","∂z/∂x = 2x - 3y","∂z/∂x = 2x + 4y","∂z/∂x = 2x - 4y"],a:0},
+  {q:"z = x² + 3xy bo'lsa, ∂z/∂y = ?",o:["∂z/∂y = -3x","∂z/∂y = 3x","∂z/∂y = 4x","∂z/∂y = -4x"],a:1},
+  {q:"z = 2x²y - 3xy² bo'lsa, ∂z/∂x = ?",o:["2xy - 3y²","4xy + 3y²","4xy - 3y²","2xy + 3y²"],a:2},
+  {q:"z = 2x²y - 3xy² bo'lsa, ∂z/∂y = ?",o:["2x² + 3xy","2x² - 3xy","2x² + 6xy","2x² - 6xy"],a:3},
+  {q:"∫ aˣ dx = ?",o:["aˣ/ln a + c","aˣ⁺¹/ln a + c","(aˣ-1)/ln a + c","aˣ⁺¹/ln a + c"],a:0},
+  {q:"∫ e⁵ˣ dx = ?",o:["e⁵ˣ + c","(1/5)e⁵ˣ + c","5e⁴ˣ + c","4e⁵ˣ + c"],a:1},
+  {q:"∫ cos(7x) dx = ?",o:["sin(7x) + c","7sin(7x) + c","(1/7)sin(7x) + c","-(1/7)sin(7x) + c"],a:2},
+  {q:"y = tg(x) + cos funksiyaning y' hosilasini toping.",o:["2/cos²x","1/(1-sin²x)/cos²x","1/(1-sin²x)/sin²x","0"],a:0},
+  {q:"y = tg(x) - ctg(x) funksiyaning y' hosilasini toping.",o:["3","1","0","9"],a:2},
+  {q:"y = 5/x⁴ funksiyaning hosilasini toping.",o:["y' = -6/x","y' = 5/(-6x⁵)","y' = -20/x⁴","y' = -20/x⁵"],a:3},
+  {q:"[a,b] kesmada uzluksiz va (a,b) intervalda differensiallanuvchi f(x) funksiya uchun Lagranj formulasi qanday yoziladi?",o:["f(b) - f(a) = f'(c)(b-a)","0 = f'(c)·b","f(c) = f(b)","0 = f'(c)"],a:0},
+  {q:"Lopital qoidasiga ko'ra lim(x→a) f(x)/g(x) limit qanday hisoblanadi?",o:["lim f(x)/lim g²(x)","lim f'(x)/lim g'(x)","lim f(x)/lim g²(x)","lim f(x)/g(x)"],a:1},
+  {q:"Differensiallanuvchi funksiyaning hosilasi biror oraliqda musbat bo'lsa, funksiya bu oraliqda:",o:["o'zgarmas songa teng bo'ladi","o'sadi","kamayadi","o'smaydi"],a:1},
+  {q:"∫ cos²(x) dx integralni toping.",o:["(1/2)sin²x + C","(1/2)x + (1/2)sin x + C","-(1/2)cos²x + C","(1/2)x + (1/4)sin(2x) + C"],a:3},
+  {q:"∫ sin(x-4) dx integralni toping.",o:["-cos(x-4) + C","cos(x-4) + C","-cos x + C","cos(4x) + C"],a:0},
+  {q:"∫ dx/(x·ln³x) integralni toping.",o:["-ln³x + C","(ln x + 2)³ + C","-1/(2ln²x) + C","-3/(2ln²x) + C"],a:2},
+  {q:"∫ dx/cos²(x/2) integralni toping.",o:["A = 2tg(x/2) + C","B = -ctg(x/2) + C","C = tg(x/2) + C","D = 2tg(x/2) + C"],a:3},
+  {q:"∫ dx/(x² - a²) integralni toping.",o:["(1/a)arctan(x/a) + C","(1/2a)ln|(x-a)/(x+a)| + C","arcsin(x/a) + C","x·arctan(x/a) + C"],a:1},
+  {q:"∫ (2x² + 1/x - 5) dx integralni toping.",o:["2x³ + ln x - 5x + C","(2x³/3) + ln x - 5x + C","3x³ + ln|x| - 5x + C","3x³ + ln x - 5x + C"],a:1},
+  {q:"∫ e^(x²) · 2x dx integralni toping.",o:["2e^(x²) + C","(1/2)e^(x²) + C","e^(x²) + C","2x·e^(x²) + C"],a:2},
+  {q:"∫ (x⁴/4 - 5cos x - 9x) dx integralni toping.",o:["x⁵/4 - 5sin x - 9x + C","x⁵/20 + 5cos x - 9x²/2 + C","x⁵/20 - 5sin x - 9x²/2 + C","3x⁵/20 - 5cos x - 9x³/3 + C"],a:2},
+  {q:"Bo'laklab integrallash formulasini ko'rsating.",o:["∫udv = uv - ∫vdu","∫[f+g]dx = ∫fdx + ∫gdx","∫f·g dx = ∫fdx·∫gdx","∫f'(x)/f(x) dx = ln|f(x)| + C"],a:0},
+];
+
+const algoQuestions = [
+  {q:"Rekursiya nima?",o:["Sikl turi","Funksiya o'zini chaqirishi","Massiv","Fayl"],a:1},
+  {q:"Rekursiv funksiya tugashi uchun nima kerak?",o:["Print","Bazaviy holat","Loop","Input"],a:1},
+  {q:"Binary search qayerda ishlaydi?",o:["Tartiblanmagan massivda","Tartiblangan massivda","Grafda","Stackda"],a:1},
+  {q:"Hashlashning asosiy vazifasi?",o:["Saralash","Tez qidirish","Siqish","Nusxa olish"],a:1},
+  {q:"Collision nima?",o:["Xotira to'lishi","Ikki kalit bir indeksga tushishi","Fayl buzilishi","Sikl"],a:1},
+  {q:"Bubble sort qaysi algoritm?",o:["Qidiruv","Saralash","Hash","Graf"],a:1},
+  {q:"Bubble sort eng yomon holati?",o:["O(n)","O(log n)","O(n²)","O(1)"],a:2},
+  {q:"Stack printsipi?",o:["FIFO","LIFO","Random","Priority"],a:1},
+  {q:"Queue printsipi?",o:["LIFO","FIFO","FILO","Random"],a:1},
+  {q:"Deque nima?",o:["Faqat oldidan ishlaydi","Faqat oxiridan ishlaydi","Ikki tomondan ishlaydi","Faqat o'qiladi"],a:2},
+  {q:"Priority queue nimaga asoslanadi?",o:["Hajmga","Ustuvorlikka","Vaqtga","Rangga"],a:1},
+  {q:"Chiziqli tuzilma qaysi?",o:["Massiv","Daraxt","Graf","Heap"],a:0},
+  {q:"Daraxt ildizi bu —",o:["Oxirgi tugun","Eng yuqori tugun","Eng past tugun","Tasodifiy tugun"],a:1},
+  {q:"Binar daraxtda maksimal farzand soni?",o:["1","2","3","Cheksiz"],a:1},
+  {q:"BST da chap tugun qiymati?",o:["Katta","Kichik","Teng","Farqsiz"],a:1},
+  {q:"Muvozanatlangan daraxt afzalligi?",o:["Sekin ishlaydi","Tez qidiruv","Ko'p joy oladi","Murakkab"],a:1},
+  {q:"Heap tree qayerda ishlatiladi?",o:["Stack","Priority Queue","Hash","Array"],a:1},
+  {q:"Max heap ildizi qanday?",o:["Eng kichik","Eng katta","O'rtacha","Tasodifiy"],a:1},
+  {q:"Graf nima?",o:["Massiv","Tugun va qirralar majmuasi","Jadval","Fayl"],a:1},
+  {q:"Vertex bu —",o:["Qirra","Tugun","Og'irlik","Yo'l"],a:1},
+  {q:"Edge bu —",o:["Tugun","Bog'lanish","Sikl","Vazn"],a:1},
+  {q:"BFS qanday qidiradi?",o:["Chuqurlab","Qavatma-qavat","Tasodifiy","Orqadan"],a:1},
+  {q:"DFS qanday ishlaydi?",o:["Yonlama","Chuqurlab","Saralab","Hashlab"],a:1},
+  {q:"Eng qisqa yo'l algoritmi?",o:["Bubble","Merge","Dijkstra","Linear"],a:2},
+  {q:"Dijkstra nimani topadi?",o:["Eng uzun yo'l","Eng qisqa yo'l","Eng katta tugun","Eng kichik graf"],a:1},
+  {q:"Hash table elementi?",o:["Index","Key–Value","Pointer","File"],a:1},
+  {q:"Collision yechimi?",o:["Stack","Chaining","Recursion","Sorting"],a:1},
+  {q:"Quick sort o'rtacha murakkabligi?",o:["O(n²)","O(n log n)","O(1)","O(log n)"],a:1},
+  {q:"Merge sort afzalligi?",o:["Sekin","Barqaror","Xotirasiz","Tasodifiy"],a:1},
+  {q:"Rekursiya nimaga olib kelishi mumkin?",o:["Disk to'lishi","Stack overflow","Internet uzilishi","Virus"],a:1},
+  {q:"Linked list afzalligi?",o:["Indeksli","Dinamik o'lcham","Tez saralash","Faylli"],a:1},
+  {q:"Single linked list nechta pointer?",o:["1","2","3","0"],a:0},
+  {q:"Double linked list nechta pointer?",o:["1","2","3","4"],a:1},
+  {q:"Yo'naltirilgan graf?",o:["Direction bor","Vaznsiz","Rangli","Tekis"],a:0},
+  {q:"Adjacency matrix nima?",o:["Tugunlar ro'yxati","Bog'lanish jadvali","Stack","Heap"],a:1},
+  {q:"Algoritm murakkabligi nimani bildiradi?",o:["Kod uzunligi","Vaqt va xotira","Dizayn","Rang"],a:1},
+  {q:"Big-O nimani ko'rsatadi?",o:["Eng yaxshi holat","Yuqori chegarani","Past chegarani","Aniqlik"],a:1},
+  {q:"Heap sort nimaga asoslanadi?",o:["Stack","Queue","Heap","Graph"],a:2},
+  {q:"Daraxt yurish turlari?",o:["Inorder, Preorder, Postorder","Push, Pop","Add, Delete","BFS, Hash"],a:0},
+  {q:"Graf sikli bu —",o:["Tugun","Yopiq yo'l","Qirra","Vazn"],a:1},
+  {q:"Weighted graph nima?",o:["Rangli","Og'irlikli","Tekis","To'liq"],a:1},
+  {q:"BFS qachon qulay?",o:["Og'irliksiz grafda eng qisqa yo'l","Saralashda","Hashlashda","Siqishda"],a:0},
+  {q:"DFS nimada foydali?",o:["Saralash","Sikl topishda","Fayl ochish","Chop etish"],a:1},
+  {q:"Recursive funksiya sharti?",o:["Print","Base case","Input","File"],a:1},
+  {q:"Algoritm bu —",o:["Qurilma","Dastur","Muammoni yechish bosqichlari","Fayl"],a:2},
+  {q:"Priority queue qayerda ishlatiladi?",o:["Rasm chizishda","Rejalashtirishda","Audio","Video"],a:1},
+  {q:"BST ning afzalligi?",o:["Sekin ishlash","Tez qidirish","Ko'p xotira","Murakkablik"],a:1},
+  {q:"AVL daraxt nima?",o:["Oddiy daraxt","Muvozanatlangan BST","Heap","Graf"],a:1},
+  {q:"Chiziqli qidiruv murakkabligi?",o:["O(1)","O(n)","O(log n)","O(n log n)"],a:1},
+  {q:"AVL daraxtda balans faktori qanday oraliqda bo'ladi?",o:["−2 dan +2 gacha","−1 dan +1 gacha","0 dan +2 gacha","−3 dan +3 gacha"],a:1},
+  {q:"Rekursiv funksiya stack xotiradan chiqib ketishiga nima sabab bo'ladi?",o:["Noto'g'ri return","O'zgaruvchi yetishmasligi","Bazaviy holat yo'qligi","Print ko'pligi"],a:2},
+  {q:"Binary Search Tree da inorder traversal natijasi qanday bo'ladi?",o:["Teskari tartib","O'sish tartibida saralangan qiymatlar","Tasodifiy tartib","Kamayish tartibi"],a:1},
+  {q:"Hash jadvalda load factor oshib ketsa nima qilinadi?",o:["Stack ishlatiladi","Rehashing bajariladi","DFS chaqiriladi","Heap quriladi"],a:1},
+  {q:"Max-heap dan element o'chirilganda qaysi amal bajariladi?",o:["Rotate","Merge","Heapify","Hash"],a:2},
+  {q:"Graflarda eng qisqa yo'l algoritmi manfiy og'irliklarda nega ishlamaydi?",o:["Stack sabab","Noto'g'ri minimal tanlov qilinadi","Xotira yetmaydi","Rekursiya tugamaydi"],a:1},
+  {q:"Adjacency list qachon adjacency matrixdan samaraliroq?",o:["Graf to'liq bo'lsa","Graf siyrak bo'lsa","Tugun kam bo'lsa","Og'irlik bo'lmasa"],a:1},
+  {q:"Priority Queue Heap orqali amalga oshirilsa, insert murakkabligi?",o:["O(1)","O(log n)","O(n)","O(n²)"],a:1},
+  {q:"DFS algoritmi rekursiya bilan yozilganda qaysi tuzilmadan yashirin foydalanadi?",o:["Queue","Stack","Heap","Hash table"],a:1},
+  {q:"Merge Sort nega 'divide and conquer' deyiladi?",o:["Faqat saralaydi","Massivni bo'lib, yechimlarni birlashtiradi","Hash ishlatadi","Grafga asoslanadi"],a:1},
+  {q:"Binary search murakkabligi?",o:["O(n)","O(n²)","O(log n)","O(1)"],a:2},
+  {q:"Stack da qaysi operatsiya eng oxirgi kiritilgan elementni oladi?",o:["Enqueue","Dequeue","Push","Pop"],a:3},
+  {q:"Queue da yangi element qayerga qo'shiladi?",o:["Oldiga","Oxiriga","O'rtaga","Tasodifiy"],a:1},
+];
+
 let currentSubject=null,questions=[],current=0,correct=0,wrong=0,answered=false,shuffleOn=true;
 function goHome(){
   document.getElementById('subjectScreen').style.display='block';
@@ -568,8 +779,8 @@ function showStart(s){
   document.getElementById('startScreen').style.display='block';
   const isE=s==='english';
   document.getElementById('startDesc').textContent=isE?'Ingliz tili bo\'yicha 293 ta test savoli. Grammatika, leksika, prepositions, vaqt va boshqalar.':'Dinshunoslik fanidan 80+ test savoli. Har safar savollar aralashtiriladi.';
-  document.getElementById('startBtn').className='btn-start'+(isE?' blue-btn':'');
-  document.getElementById('shuffleToggle').className='toggle on'+(isE?' blue':'');
+  document.getElementById('startBtn').className='btn-start'+(isE?' blue-btn':isH?' purple-btn':isA?' green-btn':'');
+  document.getElementById('shuffleToggle').className='toggle on'+(isE?' blue':isH?' purple':isA?' green':'');
 }
 function toggleShuffle(){
   shuffleOn=!shuffleOn;
@@ -579,15 +790,15 @@ function toggleShuffle(){
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function startQuiz(){
-  const pool=currentSubject==='english'?engQuestions:dinQuestions;
+  const pool=currentSubject==='english'?engQuestions:currentSubject==='hisob'?hisobQuestions:currentSubject==='algo'?algoQuestions:dinQuestions;
   questions=shuffleOn?shuffle([...pool]):[...pool];
   current=0;correct=0;wrong=0;
   document.getElementById('startScreen').style.display='none';
   document.getElementById('quizScreen').style.display='block';
   const isE=currentSubject==='english';
-  document.getElementById('progressBar').className='progress-bar'+(isE?' blue':'');
-  document.getElementById('qCounter').className='stat-value '+(isE?'sv-blue':'sv-accent');
-  document.getElementById('scorePercent').className='stat-value '+(isE?'sv-blue':'sv-accent');
+  const isH2=currentSubject==='hisob';const isA2=currentSubject==='algo';document.getElementById('progressBar').className='progress-bar'+(isE?' blue':isH2?' purple':isA2?' green':'');
+  document.getElementById('qCounter').className='stat-value '+(isE?'sv-blue':isH2?'sv-purple':isA2?'sv-green':'sv-accent');
+  document.getElementById('scorePercent').className='stat-value '+(isE?'sv-blue':isH2?'sv-purple':isA2?'sv-green':'sv-accent');
   renderQuestion();
 }
 function renderQuestion(){
@@ -605,7 +816,7 @@ function renderQuestion(){
   container.innerHTML='';
   idx.forEach((orig,disp)=>{
     const btn=document.createElement('button');
-    btn.className='option '+(isE?'eng-opt':'din-opt');
+    const isH3=currentSubject==='hisob';const isA3=currentSubject==='algo';btn.className='option '+(isE?'eng-opt':isH3?'hisob-opt':isA3?'algo-opt':'din-opt');
     btn.dataset.isCorrect=(orig===q.a)?'1':'0';
     btn.innerHTML=`<span class="letter">${['A','B','C','D'][disp]}</span><span>${q.o[orig]}</span>`;
     btn.onclick=()=>selectOption(btn);
@@ -615,7 +826,7 @@ function renderQuestion(){
   document.getElementById('feedback').textContent='';
   const nb=document.getElementById('nextBtn');
   nb.style.display='none';
-  nb.className='btn-next'+(isE?' blue-btn':'');
+  const isH4=currentSubject==='hisob';const isA4=currentSubject==='algo';nb.className='btn-next'+(isE?' blue-btn':isH4?' purple-btn':isA4?' green-btn':'');
   const card=document.getElementById('questionCard');
   card.style.animation='none';card.offsetHeight;card.style.animation='slideIn 0.35s ease';
 }
@@ -639,7 +850,7 @@ function showResult(){
   const s=document.getElementById('resultScreen');s.style.display='block';
   const total=questions.length,pct=Math.round(correct/total*100);
   const sc=document.getElementById('finalScore');
-  sc.textContent=pct+'%';sc.style.color=currentSubject==='english'?'var(--blue)':'var(--accent)';
+  sc.textContent=pct+'%';sc.style.color=currentSubject==='english'?'var(--blue)':currentSubject==='hisob'?'var(--purple)':currentSubject==='algo'?'var(--green)':'var(--accent)';
   document.getElementById('rCorrect').textContent=correct;
   document.getElementById('rWrong').textContent=wrong;
   document.getElementById('rTotal').textContent=total;
